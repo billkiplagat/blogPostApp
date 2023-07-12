@@ -17,3 +17,4 @@ def GetAllPosts(request):
     get_posts = Post.objects.all()
     serializer = PostSerializer(get_posts, many=True)  # many=True mean we are passing a list of objects not 1 item
     return Response(serializer.data)
+
