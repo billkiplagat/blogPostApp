@@ -28,3 +28,48 @@ def CreatePost(request):
         return Response({"Success": "The post was created"}, status=201)
     else:
         return Response(serializer.errors, status=400)
+
+
+@api_view(['DELETE'])
+def DeletePost(request):
+    # getting id from user
+    post_id = request.data.get('post_id')
+    try:
+        # Checking if id exist in DB
+        post = Post.objects.get(id=post_id)
+        post.delete()
+        return Response({"Success": "The post was successfully deleted"}, status=200)
+    except Post.DoesNotExist:
+        return Response({"Error": "The post does not exist in Database"}, status=404)
+
+
+@api_view(['GET'])
+def GetPost(request):
+    # getting id from user
+    post_id = request.data.get('post_id')
+    try:
+        # Checking if id exist in DB
+        post = Post.objects.get(id=post_id)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+    except Post.DoesNotExist:
+        return Response({"Error": "The post does not exist in Database"}, status=404)
+
+
+@api_view(['PUT'])
+def UpdatePost(request):
+    post_id = request.data.get('post_id')
+    new_title = request.data.get('new_title')
+    new_content = request.data.get('new_content')
+
+    try:
+        post = Post.objects.get(id=post_id)
+        if new_title:
+            post.title = new_title
+        if new_content:
+            post.content = new_content
+        post.save()
+        return Response({"Success": "The post was successfully updated"}, status=200)
+
+    except Post.DoesNotExist:
+        return Response({"Error": "The post does not exist in Database"}, status=404)
